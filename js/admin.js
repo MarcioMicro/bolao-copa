@@ -153,9 +153,50 @@ async function loadGames() {
       <button onclick="addGame()" class="btn btn-primary">Adicionar Jogo</button>
     </div>
     <h3>Jogos Cadastrados</h3>
-    <div class="games-list">
-      ${allGames.length ? allGames.map(g => gameRow(g)).join('') : '<p class="empty-msg">Nenhum jogo.</p>'}
-    </div>`;
+    ${renderGamesByPhase()}`;
+}
+
+function renderGamesByPhase() {
+  if (!allGames.length) return '<p class="empty-msg">Nenhum jogo.</p>';
+
+  const phaseOrder = ['16avos', 'Oitavas', 'Quartas', 'Semifinal', 'Terceiro Lugar', 'Final'];
+  const byPhase = {};
+  allGames.forEach(g => {
+    if (!byPhase[g.fase]) byPhase[g.fase] = [];
+    byPhase[g.fase].push(g);
+  });
+
+  const phases = Object.keys(byPhase).sort((a, b) => {
+    const ia = phaseOrder.indexOf(a), ib = phaseOrder.indexOf(b);
+    if (ia === -1 && ib === -1) return a.localeCompare(b);
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
+
+  return phases.map(fase => {
+    const safeId = 'admin-' + fase.replace(/\s+/g, '-');
+    const hasOpen = byPhase[fase].some(g => g.encerrado !== true && String(g.encerrado).toUpperCase() !== 'TRUE');
+    const collapsed = !hasOpen;
+    return `
+      <div class="phase-section">
+        <h2 class="phase-title phase-toggle" onclick="toggleAdminPhase('${safeId}')">
+          <span id="icon-${safeId}">${collapsed ? '▸' : '▾'}</span> ${fase}
+          <span class="phase-count">${byPhase[fase].length} jogo${byPhase[fase].length !== 1 ? 's' : ''}</span>
+        </h2>
+        <div class="games-list" id="grid-${safeId}" style="${collapsed ? 'display:none' : ''}">
+          ${byPhase[fase].map(g => gameRow(g)).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleAdminPhase(safeId) {
+  const grid = document.getElementById(`grid-${safeId}`);
+  const icon = document.getElementById(`icon-${safeId}`);
+  const collapsed = grid.style.display === 'none';
+  grid.style.display = collapsed ? '' : 'none';
+  icon.textContent = collapsed ? '▾' : '▸';
 }
 
 function gameRow(g) {
