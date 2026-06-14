@@ -94,6 +94,33 @@ async function saveChampion() {
   renderChampion();
 }
 
+let activeFilter = 'todos';
+
+function setFilter(filter) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('onclick').includes(`'${filter}'`));
+  });
+  renderGames();
+}
+
+function gameMatchesFilter(game) {
+  const closed = game.encerrado === true || game.encerrado === 'TRUE';
+  const deadlinePassed = isDeadlinePassed(game.prazoAposta);
+  const canBet = !closed && !deadlinePassed;
+  if (activeFilter === 'abertos') return canBet;
+  if (activeFilter === 'sem-aposta') return canBet && !userBets[game.id];
+  return true;
+}
+
+function togglePhase(safeId) {
+  const grid = document.getElementById(`grid-${safeId}`);
+  const icon = document.getElementById(`icon-${safeId}`);
+  const collapsed = grid.style.display === 'none';
+  grid.style.display = collapsed ? '' : 'none';
+  icon.textContent = collapsed ? '▾' : '▸';
+}
+
 function renderGames() {
   const container = document.getElementById('games-container');
   if (!games.length) {
@@ -101,9 +128,8 @@ function renderGames() {
     return;
   }
 
-  const byPhase = {};
   const phaseOrder = ['16avos', 'Oitavas', 'Quartas', 'Semifinal', 'Terceiro Lugar', 'Final'];
-
+  const byPhase = {};
   games.forEach(g => {
     if (!byPhase[g.fase]) byPhase[g.fase] = [];
     byPhase[g.fase].push(g);
@@ -117,14 +143,31 @@ function renderGames() {
     return ia - ib;
   });
 
-  container.innerHTML = phases.map(fase => `
-    <div class="phase-section">
-      <h2 class="phase-title">${fase}</h2>
-      <div class="games-grid">
-        ${byPhase[fase].map(g => gameCard(g)).join('')}
-      </div>
-    </div>
-  `).join('');
+  const html = phases.map(fase => {
+    const filtered = byPhase[fase].filter(gameMatchesFilter);
+    if (activeFilter !== 'todos' && !filtered.length) return '';
+
+    const visibleGames = activeFilter === 'todos' ? byPhase[fase] : filtered;
+    const hasOpen = byPhase[fase].some(g => {
+      const closed = g.encerrado === true || g.encerrado === 'TRUE';
+      return !closed && !isDeadlinePassed(g.prazoAposta);
+    });
+    const collapsed = !hasOpen;
+    const safeId = fase.replace(/\s+/g, '-');
+
+    return `
+      <div class="phase-section">
+        <h2 class="phase-title phase-toggle" onclick="togglePhase('${safeId}')">
+          <span id="icon-${safeId}">${collapsed ? '▸' : '▾'}</span> ${fase}
+          <span class="phase-count">${visibleGames.length} jogo${visibleGames.length !== 1 ? 's' : ''}</span>
+        </h2>
+        <div class="games-grid" id="grid-${safeId}" style="${collapsed ? 'display:none' : ''}">
+          ${visibleGames.map(g => gameCard(g)).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  container.innerHTML = html || '<p class="empty-msg">Nenhum jogo encontrado para este filtro.</p>';
 }
 
 function gameCard(game) {
