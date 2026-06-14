@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bolão Copa Amigos da URI</title>
+  <link rel="icon" type="image/png" href="images/simbolo.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="login-page">
+  <div class="login-header">
+    <img src="images/simbolo_negativo.png" alt="URI" class="login-logo">
+    <h1>Bolão Copa<br><span class="login-subtitle">Amigos da URI</span></h1>
+    <p>Faça seus palpites e dispute com os amigos!</p>
+  </div>
+
+  <div class="login-card">
+    <div class="login-card-brand">
+      <img src="images/simbolo.png" alt="URI" class="login-card-logo">
+      <span>Amigos da URI</span>
+    </div>
+    <div class="tab-switch">
+      <button class="active" onclick="switchTab('login')">Entrar</button>
+      <button onclick="switchTab('cadastro')">Cadastrar</button>
+    </div>
+
+    <!-- Login -->
+    <form class="login-form active" id="form-login" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" id="login-nome" autocomplete="username" required placeholder="Seu nome">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="login-senha" autocomplete="current-password" required placeholder="Sua senha">
+      </div>
+      <button type="submit" class="btn btn-login" id="btn-login">Entrar</button>
+      <div id="login-msg" class="login-msg"></div>
+    </form>
+
+    <!-- Cadastro -->
+    <form class="login-form" id="form-cadastro" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" id="reg-nome" autocomplete="username" required placeholder="Como quer ser chamado">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="reg-senha" autocomplete="new-password" required placeholder="Crie uma senha">
+      </div>
+      <div class="form-group">
+        <label>Confirmar Senha</label>
+        <input type="password" id="reg-senha2" autocomplete="new-password" required placeholder="Repita a senha">
+      </div>
+      <button type="submit" class="btn btn-login" id="btn-reg">Cadastrar</button>
+      <div id="reg-msg" class="login-msg"></div>
+    </form>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  // Redirect if already logged in
+  if (Auth.get()) window.location.href = 'apostas.html';
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-switch button').forEach((b, i) => {
+      b.classList.toggle('active', (i === 0) === (tab === 'login'));
+    });
+    document.getElementById('form-login').classList.toggle('active', tab === 'login');
+    document.getElementById('form-cadastro').classList.toggle('active', tab === 'cadastro');
+    showMsg('login-msg', '');
+    showMsg('reg-msg', '');
+  }
+
+  function showMsg(id, msg, type = 'error') {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = `login-msg ${msg ? 'show ' + type : ''}`;
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-login');
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+
+    const nome = document.getElementById('login-nome').value.trim();
+    const senha = document.getElementById('login-senha').value;
+    const hash = await sha256(senha);
+
+    const res = await apiPost('login', { nome, senha: hash }).catch(() => ({ success: false, error: 'Erro de conexão. Verifique a URL do script.' }));
+
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+
+    if (!res.success) return showMsg('login-msg', res.error);
+
+    const user = { ...res.user, senhaHash: hash };
+    Auth.save(user);
+    window.location.href = 'apostas.html';
+  }
+
+  async function handleRegister(e) {
+    e.preventDefault();
+    const nome = document.getElementById('reg-nome').value.trim();
+    const senha = document.getElementById('reg-senha').value;
+    const senha2 = document.getElementById('reg-senha2').value;
+
+    if (senha !== senha2) return showMsg('reg-msg', 'As senhas não conferem');
+    if (senha.length < 4) return showMsg('reg-msg', 'Senha muito curta (mín. 4 caracteres)');
+
+    const btn = document.getElementById('btn-reg');
+    btn.disabled = true;
+    btn.textContent = 'Cadastrando...';
+
+    const hash = await sha256(senha);
+    const res = await apiPost('register', { nome, senha: hash }).catch(() => ({ success: false, error: 'Erro de conexão.' }));
+
+    btn.disabled = false;
+    btn.textContent = 'Cadastrar';
+
+    if (!res.success) return showMsg('reg-msg', res.error);
+    showMsg('reg-msg', res.message || 'Cadastro realizado! Aguarde aprovação.', 'success');
+  }
+</script>
+</body>
+</html>

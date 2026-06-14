@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apostas — Bolão Copa Amigos da URI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="images/simbolo.png">
+</head>
+<body>
+  <nav id="nav"></nav>
+
+  <div class="page">
+    <div class="page-header">
+      <h1>Minhas Apostas</h1>
+      <button onclick="loadAll()" class="btn btn-secondary btn-sm">Atualizar</button>
+    </div>
+
+    <div id="champion-section"></div>
+    <div id="games-container"><p class="loading-msg">Carregando jogos...</p></div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/flags.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/apostas.js"></script>
+</body>
+</html>

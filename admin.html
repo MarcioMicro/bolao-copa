@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Bolão Copa Amigos da URI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="images/simbolo.png">
+</head>
+<body>
+  <nav id="nav"></nav>
+
+  <div class="page">
+    <h1>Painel Admin</h1>
+
+    <div class="tab-buttons">
+      <button class="tab-btn active" data-tab="usuarios" onclick="showTab('usuarios')">Usuários</button>
+      <button class="tab-btn" data-tab="jogos" onclick="showTab('jogos')">Jogos</button>
+      <button class="tab-btn" data-tab="resultados" onclick="showTab('resultados')">Resultados</button>
+      <button class="tab-btn" data-tab="config" onclick="showTab('config')">Config</button>
+    </div>
+
+    <div id="tab-usuarios" class="tab-panel active">
+      <p class="loading-msg">Carregando...</p>
+    </div>
+
+    <div id="tab-jogos" class="tab-panel"></div>
+    <div id="tab-resultados" class="tab-panel"></div>
+    <div id="tab-config" class="tab-panel"></div>
+  </div>
+
+  <div id="setup-panel" style="display:none" class="page" style="max-width:420px">
+    <div class="card" style="padding:32px;max-width:420px;margin:40px auto">
+      <h2 style="margin-bottom:8px">Criar primeiro administrador</h2>
+      <p style="color:var(--cinza);margin-bottom:24px;font-size:0.95rem">Nenhum admin encontrado. Crie o administrador inicial.</p>
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" id="setup-nome" placeholder="Nome do admin" class="config-input">
+      </div>
+      <div class="form-group" style="margin-top:12px">
+        <label>Senha</label>
+        <input type="password" id="setup-senha" placeholder="Senha" class="config-input">
+      </div>
+      <button onclick="setupAdmin()" class="btn btn-primary" style="margin-top:16px;width:100%">Criar administrador</button>
+      <div id="setup-msg" style="margin-top:12px;font-size:0.9rem"></div>
+    </div>
+  </div>
+
+  <div id="modal" onclick="if(event.target===this)closeModal()"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/flags.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

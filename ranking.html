@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ranking — Bolão Copa Amigos da URI</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="images/simbolo.png">
+</head>
+<body>
+  <nav id="nav"></nav>
+
+  <div class="page">
+    <div class="page-header">
+      <h1>Ranking</h1>
+      <button onclick="init()" class="btn btn-secondary btn-sm">Atualizar</button>
+    </div>
+
+    <div id="champ-banner"></div>
+
+    <div class="ranking-table-wrap">
+      <table class="ranking-table">
+        <thead id="ranking-header"></thead>
+        <tbody id="ranking-body">
+          <tr><td colspan="7" class="loading-msg">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:20px; padding:16px; background:white; border-radius:10px; box-shadow:var(--shadow); font-size:0.85rem; color:var(--cinza)">
+      <strong>Pontuação:</strong>
+      🎯 Placar exato = 8pts &nbsp;|&nbsp;
+      📊 Saldo de gols certo = 5pts &nbsp;|&nbsp;
+      ✅ Vencedor/empate certo = 3pts &nbsp;|&nbsp;
+      🏆 Campeão certo = 20pts
+    </div>
+  </div>
+
+  <div id="bets-modal" style="display:none" onclick="if(event.target===this)closeBetsModal()">
+    <div class="modal-content" style="max-width:680px;width:95%">
+      <h3 id="bets-modal-title"></h3>
+      <div id="bets-modal-body" style="margin-top:16px;max-height:60vh;overflow-y:auto"></div>
+      <div class="modal-actions">
+        <button onclick="closeBetsModal()" class="btn btn-secondary">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/flags.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/ranking.js"></script>
+</body>
+</html>
