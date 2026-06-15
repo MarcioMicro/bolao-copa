@@ -272,9 +272,14 @@ function editGame(id) {
   const countries = getAllCountries();
 
   const modal = document.getElementById('modal');
+  const phases = ['Grupos', '16avos', 'Oitavas', 'Quartas', 'Semifinal', 'Terceiro Lugar', 'Final'];
   modal.innerHTML = `
     <div class="modal-content">
       <h3>Editar Jogo</h3>
+      <div class="form-group">
+        <label>Fase</label>
+        <select id="edit-fase">${phases.map(p => `<option value="${p}" ${p === game.fase ? 'selected' : ''}>${p}</option>`).join('')}</select>
+      </div>
       <div class="form-group">
         <label>Time 1</label>
         <select id="edit-time1">${countries.map(c => `<option value="${c}" ${c === game.time1 ? 'selected' : ''}>${c}</option>`).join('')}</select>
@@ -302,6 +307,7 @@ function editGame(id) {
 async function saveEdit(id) {
   const res = await apiPost('adminUpdateGame', {
     ...Auth.credentials(), id,
+    fase: document.getElementById('edit-fase').value,
     time1: document.getElementById('edit-time1').value,
     time2: document.getElementById('edit-time2').value,
     dataHora: document.getElementById('edit-data').value,

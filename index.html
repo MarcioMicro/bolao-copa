@@ -13,6 +13,7 @@
     <img src="images/simbolo_negativo.png" alt="URI" class="login-logo">
     <h1>Bolão Copa<br><span class="login-subtitle">Amigos da URI</span></h1>
     <p>Faça seus palpites e dispute com os amigos!</p>
+    <button class="btn-regras" onclick="openRegrasModal()" style="margin-top:10px">📋 Regras &amp; Como Participar</button>
   </div>
 
   <div class="login-card">
@@ -62,6 +63,7 @@
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
+<script src="js/regras.js"></script>
 <script>
   // Redirect if already logged in
   if (Auth.get()) window.location.href = 'apostas.html';

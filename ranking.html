@@ -13,7 +13,10 @@
   <div class="page">
     <div class="page-header">
       <h1>Ranking</h1>
-      <button onclick="init()" class="btn btn-secondary btn-sm">Atualizar</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn-regras" onclick="openRegrasModal()">📋 Regras</button>
+        <button onclick="init()" class="btn btn-secondary btn-sm">Atualizar</button>
+      </div>
     </div>
 
     <div id="champ-banner"></div>
@@ -52,5 +55,6 @@
   <script src="js/auth.js"></script>
   <script src="js/main.js"></script>
   <script src="js/ranking.js"></script>
+  <script src="js/regras.js"></script>
 </body>
 </html>

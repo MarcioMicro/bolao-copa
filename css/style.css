@@ -812,6 +812,22 @@ input:focus, select:focus {
 
 .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
 
+/* ── Regras Modal ────────────────────────────────────────────────────────── */
+.regras-section { margin-top: 20px; }
+.regras-section h4 { color: var(--azul); font-size: 0.95rem; margin-bottom: 8px; border-bottom: 1px solid #e8e8e8; padding-bottom: 4px; }
+.regras-section p, .regras-section li { font-size: 0.88rem; color: #333; line-height: 1.6; }
+.regras-section ul, .regras-section ol { padding-left: 20px; margin: 4px 0; }
+.regras-section li { margin-bottom: 4px; }
+.regras-section ul ul { margin-top: 4px; }
+.regras-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 6px; }
+.regras-table th { background: var(--verde); color: white; padding: 7px 10px; text-align: left; }
+.regras-table td { padding: 6px 10px; border-bottom: 1px solid #eee; }
+.regras-table tr:last-child td { border-bottom: none; }
+.regras-table tr:nth-child(even) td { background: #f7f7f7; }
+.regras-table .pts { font-weight: 700; color: var(--verde); white-space: nowrap; }
+.btn-regras { background: none; border: 1.5px solid var(--verde); color: var(--verde); border-radius: 20px; padding: 5px 14px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: background 0.15s, color 0.15s; }
+.btn-regras:hover { background: var(--verde); color: white; }
+
 /* ── Toast ───────────────────────────────────────────────────────────────── */
 #toast-container {
   position: fixed;
