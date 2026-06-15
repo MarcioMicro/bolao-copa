@@ -207,7 +207,7 @@ function gameCard(game) {
     : `<div class="score-display">${b1 !== '' ? `${b1} x ${b2}` : '- x -'}</div>`;
 
   return `
-    <div class="game-card ${closed ? 'closed' : ''} ${hasResult ? 'with-result' : ''}">
+    <div id="card-${game.id}" class="game-card ${closed ? 'closed' : ''} ${hasResult ? 'with-result' : ''}">
       <div class="game-status">${statusBadge}</div>
       <div class="game-teams">
         <div class="team team-left">
@@ -221,7 +221,7 @@ function gameCard(game) {
         </div>
       </div>
       ${pts}
-      ${canBet ? `<button onclick="saveBet('${game.id}')" class="btn btn-save-bet">Salvar Aposta</button>` : ''}
+      ${canBet ? `<button onclick="saveBet('${game.id}')" class="btn ${bet ? 'btn-change-bet' : 'btn-save-bet'}">${bet ? 'Mudar Aposta' : 'Salvar Aposta'}</button>` : ''}
       <div class="game-deadline">${game.prazoAposta ? `Prazo: ${formatDate(game.prazoAposta)}` : ''}</div>
       ${bet && !hasResult ? `<div class="my-bet">Minha aposta: ${bet.golTime1} x ${bet.golTime2}</div>` : ''}
     </div>`;
@@ -257,6 +257,9 @@ async function saveBet(jogoId) {
 
   showToast('Aposta salva!');
   userBets[jogoId] = { jogoId, golTime1: Number(g1.value), golTime2: Number(g2.value) };
+  const cardEl = document.getElementById(`card-${jogoId}`);
+  const game = games.find(g => g.id === jogoId);
+  if (cardEl && game) cardEl.outerHTML = gameCard(game);
 }
 
 document.addEventListener('DOMContentLoaded', init);

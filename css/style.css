@@ -537,11 +537,21 @@ input:focus, select:focus {
 }
 
 .my-bet {
-  font-size: 0.8rem;
+  font-size: 1rem;
+  font-weight: 700;
   color: var(--verde-escuro);
   text-align: center;
   margin-top: 4px;
 }
+
+.btn-change-bet {
+  width: 100%;
+  background: var(--azul);
+  color: white;
+  margin-top: 8px;
+  padding: 8px;
+}
+.btn-change-bet:hover { background: #001d5e; }
 
 /* ── Ranking ─────────────────────────────────────────────────────────────── */
 .ranking-table-wrap { overflow-x: auto; }
