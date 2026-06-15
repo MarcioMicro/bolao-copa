@@ -216,8 +216,8 @@ function gameCard(game) {
         </div>
         ${inputsOrResult}
         <div class="team team-right">
-          <span class="team-name">${game.time2}</span>
           ${getFlagImg(game.time2, 'flag-game')}
+          <span class="team-name">${game.time2}</span>
         </div>
       </div>
       ${pts}

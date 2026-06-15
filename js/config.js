@@ -1,5 +1,5 @@
 const CONFIG = {
-  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyMneOQwAwXIIS1LIJXHTLlH128_Y9XvCJCcjEgvVs3vo8eXvabucWhW-N9vCfGHVpN/exec',
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwysl-Iuw6xm4qz4MWLfLtXFOeXD8IsHVZASjZAi0q-abUXQzTHB8IK1aQifpgRd_bh/exec',
   PONTOS_PLACAR_EXATO: 8,
   PONTOS_SALDO_CERTO: 5,
   PONTOS_VENCEDOR_CERTO: 3,
