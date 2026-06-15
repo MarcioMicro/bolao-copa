@@ -1,5 +1,10 @@
 let adminUser, allUsers, allGames, allBets, config;
 
+function syncPrazoAposta(value) {
+  const prazo = document.getElementById('new-prazo');
+  if (!prazo.dataset.manual) prazo.value = value;
+}
+
 async function init() {
   adminUser = Auth.get();
   const isAdmin = adminUser && (adminUser.admin === true || String(adminUser.admin).toUpperCase() === 'TRUE');
@@ -123,6 +128,7 @@ async function loadGames() {
         <div class="form-group">
           <label>Fase</label>
           <select id="new-fase">
+            <option>Grupos</option>
             <option>16avos</option>
             <option>Oitavas</option>
             <option>Quartas</option>
@@ -143,11 +149,11 @@ async function loadGames() {
       <div class="form-row">
         <div class="form-group">
           <label>Data/Hora do Jogo</label>
-          <input type="datetime-local" id="new-data">
+          <input type="datetime-local" id="new-data" oninput="syncPrazoAposta(this.value)">
         </div>
         <div class="form-group">
           <label>Prazo para Apostas</label>
-          <input type="datetime-local" id="new-prazo">
+          <input type="datetime-local" id="new-prazo" oninput="this.dataset.manual='1'">
         </div>
       </div>
       <button onclick="addGame()" class="btn btn-primary">Adicionar Jogo</button>
@@ -159,7 +165,7 @@ async function loadGames() {
 function renderGamesByPhase() {
   if (!allGames.length) return '<p class="empty-msg">Nenhum jogo.</p>';
 
-  const phaseOrder = ['16avos', 'Oitavas', 'Quartas', 'Semifinal', 'Terceiro Lugar', 'Final'];
+  const phaseOrder = ['Grupos', '16avos', 'Oitavas', 'Quartas', 'Semifinal', 'Terceiro Lugar', 'Final'];
   const byPhase = {};
   allGames.forEach(g => {
     if (!byPhase[g.fase]) byPhase[g.fase] = [];

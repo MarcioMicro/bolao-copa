@@ -128,7 +128,7 @@ function renderGames() {
     return;
   }
 
-  const phaseOrder = ['16avos', 'Oitavas', 'Quartas', 'Semifinal', 'Terceiro Lugar', 'Final'];
+  const phaseOrder = ['Grupos', '16avos', 'Oitavas', 'Quartas', 'Semifinal', 'Terceiro Lugar', 'Final'];
   const byPhase = {};
   games.forEach(g => {
     if (!byPhase[g.fase]) byPhase[g.fase] = [];
