@@ -8,7 +8,7 @@ function setupNav() {
   nav.innerHTML = `
     <div class="nav-brand">
       <img src="images/simbolo_negativo.png" alt="URI" class="nav-logo">
-      <span>Bolão Copa Amigos da URI</span>
+      <span>Bolão dos "Entendidos"</span>
     </div>
     <div class="nav-links">
       <a href="apostas.html">Apostas</a>

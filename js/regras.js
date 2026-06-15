@@ -6,7 +6,7 @@ function openRegrasModal() {
     overlay.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;align-items:center;justify-content:center;padding:20px';
     overlay.innerHTML = `
       <div class="modal-content" style="max-width:620px;width:100%;max-height:88vh;overflow-y:auto">
-        <h3 style="color:var(--verde);font-size:1.3rem">📋 Regras do Bolão Copa Amigos da URI</h3>
+        <h3 style="color:var(--verde);font-size:1.3rem">📋 Regras do Bolão dos "Entendidos"</h3>
 
         <section class="regras-section">
           <h4>Como participar</h4>
