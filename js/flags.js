@@ -27,5 +27,5 @@ function getFlagImg(country, cssClass = 'flag-img') {
 }
 
 function getAllCountries() {
-  return Object.keys(FLAG_CODES).sort();
+  return Object.keys(FLAG_CODES).sort((a, b) => a.localeCompare(b, 'pt-BR'));
 }
