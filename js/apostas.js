@@ -231,7 +231,7 @@ function calcPoints(b1, b2, r1, r2) {
   if (b1 === r1 && b2 === r2) return 8;
   const bSign = Math.sign(b1 - b2), rSign = Math.sign(r1 - r2);
   if (bSign !== rSign) return 0;
-  if (Math.abs(b1 - b2) === Math.abs(r1 - r2)) return 5;
+  if (bSign !== 0 && Math.abs(b1 - b2) === Math.abs(r1 - r2)) return 5;
   return 3;
 }
 
