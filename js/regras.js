@@ -12,7 +12,7 @@ function openRegrasModal() {
           <h4>Como participar</h4>
           <ol>
             <li>Cadastre-se no site com seu nome e uma senha e aguarde a aprovação do administrador.</li>
-            <li>Efetue o pagamento de <strong>R$ 20,00</strong> via Pix para a chave <strong>[CHAVE PIX]</strong> e envie o comprovante no grupo do WhatsApp.</li>
+            <li>Efetue o pagamento de <strong>R$ 20,00</strong> via Pix para a chave <strong>brunomatiello@uricer.edu.br</strong> e envie o comprovante no grupo do WhatsApp.</li>
             <li>Entre no grupo do WhatsApp pelo link: <strong><a href="https://chat.whatsapp.com/CyMyEylxKB59HNdHeMh2o1" target="_blank" rel="noopener">https://chat.whatsapp.com/CyMyEylxKB59HNdHeMh2o1</a></strong></li>
             <li>Após confirmação do pagamento, sua conta será aprovada e você poderá fazer seus palpites.</li>
           </ol>
