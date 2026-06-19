@@ -12,15 +12,15 @@ function openRegrasModal() {
           <h4>Como participar</h4>
           <ol>
             <li>Cadastre-se no site com seu nome e uma senha e aguarde a aprovação do administrador.</li>
-            <li>Efetue o pagamento de <strong>R$ 30,00</strong> via Pix para a chave <strong>[CHAVE PIX]</strong> e envie o comprovante no grupo do WhatsApp.</li>
-            <li>Entre no grupo do WhatsApp pelo link: <strong>[LINK DO GRUPO]</strong></li>
+            <li>Efetue o pagamento de <strong>R$ 20,00</strong> via Pix para a chave <strong>[CHAVE PIX]</strong> e envie o comprovante no grupo do WhatsApp.</li>
+            <li>Entre no grupo do WhatsApp pelo link: <strong><a href="https://chat.whatsapp.com/CyMyEylxKB59HNdHeMh2o1" target="_blank" rel="noopener">https://chat.whatsapp.com/CyMyEylxKB59HNdHeMh2o1</a></strong></li>
             <li>Após confirmação do pagamento, sua conta será aprovada e você poderá fazer seus palpites.</li>
           </ol>
         </section>
 
         <section class="regras-section">
           <h4>Quais jogos entram no bolão?</h4>
-          <p>O bolão vale a partir da <strong>segunda fase da Copa do Mundo 2026</strong> (rodada de 32 — fase eliminatória). Os jogos da fase de grupos <strong>não</strong> entram na pontuação. O administrador cadastra os jogos manualmente.</p>
+          <p>O bolão vale a partir da <strong>segunda fase da Copa do Mundo 2026</strong> (rodada de 32 — fase eliminatória). Os jogos da fase de grupos <strong>não</strong> entram na pontuação.</p>
         </section>
 
         <section class="regras-section">
@@ -100,7 +100,7 @@ function openRegrasModal() {
 
         <section class="regras-section">
           <h4>Premiação</h4>
-          <p>O valor arrecadado (R$ 30,00 por participante) será distribuído entre os três primeiros colocados:</p>
+          <p>O valor arrecadado (R$ 20,00 por participante) será distribuído entre os três primeiros colocados:</p>
           <table class="regras-table">
             <thead><tr><th>Colocação</th><th>% do prêmio</th></tr></thead>
             <tbody>
@@ -109,6 +109,10 @@ function openRegrasModal() {
               <tr><td>🥉 3º lugar</td><td class="pts">20%</td></tr>
             </tbody>
           </table>
+        </section>
+
+        <section class="regras-section" style="border-top:2px solid var(--verde);padding-top:12px;margin-top:4px">
+          <p style="margin:0;font-size:0.92rem">Quaisquer outras dúvidas serão sanadas no grupo do WhatsApp: <strong><a href="https://chat.whatsapp.com/CyMyEylxKB59HNdHeMh2o1" target="_blank" rel="noopener">entrar no grupo</a></strong>.</p>
         </section>
 
         <div class="modal-actions" style="justify-content:flex-end">
