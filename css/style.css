@@ -642,6 +642,16 @@ input:focus, select:focus {
   margin-bottom: 24px;
 }
 
+.sync-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.sync-bar .sync-info { display: flex; flex-direction: column; gap: 2px; }
+.sync-bar .config-hint { font-size: 0.85rem; color: var(--cinza); margin: 0; }
+
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));

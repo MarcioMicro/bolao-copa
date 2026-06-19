@@ -122,6 +122,13 @@ async function loadGames() {
   const countryOptions = countries.map(c => `<option value="${c}">${c}</option>`).join('');
 
   panel.innerHTML = `
+    <div class="admin-form sync-bar">
+      <div class="sync-info">
+        <strong>Sincronizar com football-data.org</strong>
+        <span class="config-hint">Importa jogos novos e atualiza placares de jogos encerrados automaticamente.</span>
+      </div>
+      <button onclick="syncAPI()" class="btn btn-primary" id="btn-sync">Sincronizar Agora</button>
+    </div>
     <div class="admin-form">
       <h3>Adicionar Jogo</h3>
       <div class="form-row">
@@ -221,6 +228,18 @@ function gameRow(g) {
       <button onclick="deleteGame('${g.id}')" class="btn btn-sm btn-danger">Excluir</button>
     </div>
   </div>`;
+}
+
+async function syncAPI() {
+  const btn = document.getElementById('btn-sync');
+  btn.disabled = true;
+  btn.textContent = 'Sincronizando...';
+  const res = await apiPost('adminSyncAPI', Auth.credentials());
+  btn.disabled = false;
+  btn.textContent = 'Sincronizar Agora';
+  if (!res.success) return showToast(res.error, 'error');
+  showToast(`${res.jogos} | ${res.resultados}`);
+  loadGames();
 }
 
 async function addGame() {
