@@ -20,7 +20,7 @@ function openRegrasModal() {
 
         <section class="regras-section">
           <h4>Quais jogos entram no bolão?</h4>
-          <p>O bolão vale a partir da <strong>segunda fase da Copa do Mundo 2026</strong> (rodada de 32 — fase eliminatória). Os jogos da fase de grupos <strong>não</strong> entram na pontuação.</p>
+          <p>O bolão vale a partir da <strong>segunda fase da Copa do Mundo 2026</strong> (rodada de 32 — fase eliminatória). Os jogos da fase de grupos <strong>não</strong> entram na pontuação oficial.</p>
         </section>
 
         <section class="regras-section">
@@ -75,6 +75,14 @@ function openRegrasModal() {
             </tbody>
           </table>
           <p style="margin-top:8px;font-size:0.85rem;color:var(--cinza)">Os palpites de campeão ficam ocultos até que o administrador opte por revelá-los no ranking.</p>
+        </section>
+
+        <section class="regras-section">
+          <h4>Prorrogação e pênaltis</h4>
+          <ul>
+            <li>O placar considerado é o <strong>placar ao final da prorrogação</strong> (90 + 30 minutos).</li>
+            <li>Jogos decididos nos <strong>pênaltis são contados como empate</strong> no placar — os gols cobrados na disputa não entram na conta.</li>
+          </ul>
         </section>
 
         <section class="regras-section">
