@@ -13,7 +13,8 @@
   <div class="page">
     <div class="page-header">
       <h1>Ranking</h1>
-      <div style="display:flex;gap:8px;align-items:center">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <button id="btn-toggle-ia" class="btn-ia-toggle active" onclick="toggleIA()">🤖 IAs</button>
         <button class="btn-regras" onclick="openRegrasModal()">📋 Regras</button>
         <button onclick="init()" class="btn btn-secondary btn-sm">Atualizar</button>
       </div>

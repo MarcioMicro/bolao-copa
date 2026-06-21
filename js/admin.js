@@ -49,9 +49,10 @@ async function loadUsers() {
   if (!res.success) { panel.innerHTML = `<p class="error">${res.error}</p>`; return; }
   allUsers = res.users;
 
-  const pending = allUsers.filter(u => u.status === 'pendente');
-  const approved = allUsers.filter(u => u.status === 'aprovado');
-  const blocked = allUsers.filter(u => u.status === 'bloqueado');
+  const pending  = allUsers.filter(u => u.status === 'pendente' && !u.isIA);
+  const approved = allUsers.filter(u => u.status === 'aprovado' && !u.isIA);
+  const blocked  = allUsers.filter(u => u.status === 'bloqueado' && !u.isIA);
+  const iaUsers  = allUsers.filter(u => u.isIA);
 
   panel.innerHTML = `
     <h3>Aguardando aprovação (${pending.length})</h3>
@@ -59,6 +60,8 @@ async function loadUsers() {
     <h3>Aprovados (${approved.length})</h3>
     ${userTable(approved, false)}
     ${blocked.length ? `<h3>Bloqueados (${blocked.length})</h3>${userTable(blocked, false)}` : ''}
+    <h3>🤖 Inteligências Artificiais (${iaUsers.length})</h3>
+    ${iaUserTable(iaUsers)}
   `;
 }
 
@@ -84,6 +87,117 @@ function userTable(users, isPending) {
       </tr>`).join('')}
     </tbody>
   </table></div>`;
+}
+
+function iaUserTable(users) {
+  if (!users.length) return '<p class="empty-msg">Nenhuma IA cadastrada. Crie usuários normais e marque a coluna IsIA como TRUE na planilha.</p>';
+  return `<div class="table-wrap"><table class="admin-table">
+    <thead><tr><th>Nome</th><th>Campeão</th><th>Ações</th></tr></thead>
+    <tbody>
+      ${users.map(u => `<tr>
+        <td>🤖 ${u.nome}</td>
+        <td>${u.campeao || '-'}</td>
+        <td class="action-cell">
+          <button onclick="openIABetsModal('${u.id}','${u.nome}')" class="btn btn-sm btn-primary">Gerenciar Apostas</button>
+          <button onclick="setIAChampion('${u.id}','${u.nome}')" class="btn btn-sm btn-secondary">Definir Campeão</button>
+        </td>
+      </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+async function openIABetsModal(userId, nome) {
+  const modal = document.getElementById('modal');
+
+  const [gamesRes, betsRes] = await Promise.all([
+    apiGet('getGames'),
+    apiPost('getUserBetsByName', { nome })
+  ]);
+
+  if (!gamesRes.success) return showToast('Erro ao carregar jogos', 'error');
+
+  const games = gamesRes.games || [];
+  const betsMap = {};
+  if (betsRes.success) {
+    (betsRes.bets || []).forEach(b => { betsMap[b.jogoId] = b; });
+  }
+
+  const rows = games.map(g => {
+    const bet = betsMap[g.id];
+    const v1 = bet ? bet.golTime1 : '';
+    const v2 = bet ? bet.golTime2 : '';
+    const closed = g.encerrado === true || String(g.encerrado).toUpperCase() === 'TRUE';
+    return `<tr>
+      <td>${g.fase}</td>
+      <td>${g.time1} x ${g.time2}</td>
+      <td class="score-inputs">
+        <input type="number" id="ia-g1-${g.id}" class="score-input" min="0" max="99" value="${v1}" placeholder="-" ${closed ? 'style="opacity:0.5"' : ''}>
+        <span>x</span>
+        <input type="number" id="ia-g2-${g.id}" class="score-input" min="0" max="99" value="${v2}" placeholder="-" ${closed ? 'style="opacity:0.5"' : ''}>
+      </td>
+      <td><button onclick="saveIABet('${userId}','${g.id}')" class="btn btn-sm btn-primary">Salvar</button></td>
+    </tr>`;
+  }).join('');
+
+  modal.innerHTML = `
+    <div class="modal-content" style="max-width:680px;width:95%">
+      <h3>🤖 Apostas de ${nome}</h3>
+      <div style="max-height:60vh;overflow-y:auto;margin-top:16px">
+        <table class="admin-table">
+          <thead><tr><th>Fase</th><th>Jogo</th><th>Palpite</th><th></th></tr></thead>
+          <tbody>${rows || '<tr><td colspan="4" class="empty-msg">Nenhum jogo cadastrado.</td></tr>'}</tbody>
+        </table>
+      </div>
+      <div class="modal-actions">
+        <button onclick="closeModal()" class="btn btn-secondary">Fechar</button>
+      </div>
+    </div>`;
+  modal.style.display = 'flex';
+}
+
+async function saveIABet(userId, jogoId) {
+  const g1 = document.getElementById(`ia-g1-${jogoId}`).value;
+  const g2 = document.getElementById(`ia-g2-${jogoId}`).value;
+  if (g1 === '' || g2 === '') return showToast('Preencha o placar', 'error');
+
+  const res = await apiPost('adminSaveBetForUser', {
+    ...Auth.credentials(), userId, jogoId,
+    golTime1: Number(g1), golTime2: Number(g2)
+  });
+  if (!res.success) return showToast(res.error, 'error');
+  showToast(`Aposta salva!`);
+}
+
+async function setIAChampion(userId, nome) {
+  const countries = getAllCountries();
+  const modal = document.getElementById('modal');
+
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h3>🏆 Campeão de ${nome}</h3>
+      <div class="form-group" style="margin-top:16px">
+        <label>País campeão</label>
+        <select id="ia-champ-select">
+          <option value="">Selecione...</option>
+          ${countries.map(c => `<option value="${c}">${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button onclick="saveIAChampion('${userId}')" class="btn btn-primary">Salvar</button>
+        <button onclick="closeModal()" class="btn btn-secondary">Cancelar</button>
+      </div>
+    </div>`;
+  modal.style.display = 'flex';
+}
+
+async function saveIAChampion(userId) {
+  const campeao = document.getElementById('ia-champ-select').value;
+  if (!campeao) return showToast('Selecione um país', 'error');
+  const res = await apiPost('adminSetChampionForUser', { ...Auth.credentials(), userId, campeao });
+  if (!res.success) return showToast(res.error, 'error');
+  showToast('Campeão salvo!');
+  closeModal();
+  loadUsers();
 }
 
 async function updateUser(userId, status) {

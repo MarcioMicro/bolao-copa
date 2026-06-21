@@ -1,4 +1,4 @@
-let rankingData, rankingConfig, rankingGames;
+let rankingData, rankingConfig, rankingGames, showIA = true;
 
 async function init() {
   const user = Auth.get();
@@ -23,6 +23,22 @@ async function init() {
   renderRanking(rankingData, rankingConfig, user);
 }
 
+function toggleIA() {
+  showIA = !showIA;
+  const btn = document.getElementById('btn-toggle-ia');
+  btn.classList.toggle('active', showIA);
+  renderRanking(rankingData, rankingConfig, Auth.get());
+}
+
+const IA_LABELS = {
+  'ChatGPT':   { emoji: '🟢', label: 'ChatGPT' },
+  'Claude':    { emoji: '🟠', label: 'Claude' },
+  'Gemini':    { emoji: '🔵', label: 'Gemini' },
+  'Perplexity':{ emoji: '🟣', label: 'Perplexity' },
+  'DeepSeek':  { emoji: '🔷', label: 'DeepSeek' },
+  'Grok':      { emoji: '⬛', label: 'Grok' },
+};
+
 function renderRanking(ranking, config, currentUser) {
   const champRevealed   = config.campeao_revelado === true || String(config.campeao_revelado).toUpperCase() === 'TRUE';
   const apostasVisiveis = config.apostas_visiveis === true || String(config.apostas_visiveis).toUpperCase() === 'TRUE';
@@ -41,16 +57,29 @@ function renderRanking(ranking, config, currentUser) {
     </tr>`;
 
   const tbody = document.getElementById('ranking-body');
-  if (!ranking.length) {
+
+  const visibleRanking = ranking.filter(r => showIA || !r.isIA);
+
+  if (!visibleRanking.length) {
     tbody.innerHTML = '<tr><td colspan="7">Nenhum resultado ainda.</td></tr>';
     return;
   }
 
   const medals = ['🥇', '🥈', '🥉'];
+  let humanPos = 0;
 
-  tbody.innerHTML = ranking.map((r, i) => {
+  tbody.innerHTML = visibleRanking.map((r, i) => {
     const isMe = currentUser && r.nome === currentUser.nome;
-    const pos = medals[i] || `${i + 1}º`;
+    const ia = r.isIA ? (IA_LABELS[r.nome] || { emoji: '🤖', label: r.nome }) : null;
+
+    let pos;
+    if (r.isIA) {
+      pos = '🤖';
+    } else {
+      humanPos++;
+      pos = medals[humanPos - 1] || `${humanPos}º`;
+    }
+
     const champCell = champRevealed
       ? `<td class="${r.champPoints > 0 ? 'champ-correct' : ''}">
           ${r.campeao || '-'}
@@ -58,11 +87,19 @@ function renderRanking(ranking, config, currentUser) {
         </td>`
       : '';
 
-    const nameCell = apostasVisiveis
-      ? `<span class="ranking-name-link" onclick="openBetsModal('${r.nome}')">${isMe ? `<strong>${r.nome}</strong>` : r.nome}</span>`
+    const nameBadge = ia
+      ? `<span class="ia-badge" title="${ia.label}">${ia.emoji} ${r.nome}</span>`
+      : '';
+
+    const nameText = ia
+      ? nameBadge
       : (isMe ? `<strong>${r.nome}</strong>` : r.nome);
 
-    return `<tr class="${isMe ? 'row-me' : ''}">
+    const nameCell = apostasVisiveis
+      ? `<span class="ranking-name-link" onclick="openBetsModal('${r.nome}')">${nameText}</span>`
+      : nameText;
+
+    return `<tr class="${isMe ? 'row-me' : ''}${r.isIA ? ' row-ia' : ''}">
       <td class="pos-cell">${pos}</td>
       <td class="name-cell">${nameCell}</td>
       <td class="pts-cell"><strong>${r.points}</strong></td>

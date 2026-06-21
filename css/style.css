@@ -591,6 +591,33 @@ input:focus, select:focus {
 .pts-cell { font-size: 1.1rem; color: var(--verde-escuro); }
 .champ-correct { color: var(--verde-escuro); font-weight: 700; }
 
+.row-ia td { background: #f5f0ff !important; color: #555; }
+.row-ia:hover td { background: #ede6ff !important; }
+.row-ia .pts-cell { color: #7c5cbf; }
+
+.ia-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5a3fa0;
+}
+
+.btn-ia-toggle {
+  padding: 5px 14px;
+  border: 2px solid #7c5cbf;
+  border-radius: 20px;
+  background: white;
+  color: #7c5cbf;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-ia-toggle:hover { background: #f0e8ff; }
+.btn-ia-toggle.active { background: #7c5cbf; color: white; }
+
 .champ-banner {
   display: flex;
   align-items: center;
