@@ -1,3 +1,12 @@
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function setupNav() {
   const user = Auth.get();
   const nav = document.getElementById('nav');
@@ -16,7 +25,7 @@ function setupNav() {
       ${adminLink}
     </div>
     <div class="nav-user">
-      <span class="nav-username">${user.nome}</span>
+      <span class="nav-username">${escapeHtml(user.nome)}</span>
       <button onclick="Auth.logout()" class="btn-logout">Sair</button>
     </div>
   `;

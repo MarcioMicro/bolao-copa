@@ -71,8 +71,8 @@ function userTable(users, isPending) {
     <thead><tr><th>Nome</th><th>Campeão</th><th>Cadastro</th><th>Admin</th><th>Ações</th></tr></thead>
     <tbody>
       ${users.map(u => `<tr>
-        <td>${u.nome}</td>
-        <td>${u.campeao || '-'}</td>
+        <td>${escapeHtml(u.nome)}</td>
+        <td>${escapeHtml(u.campeao || '-')}</td>
         <td>${formatDate(u.dataCadastro)}</td>
         <td>${u.admin ? '✅' : ''}</td>
         <td class="action-cell">
@@ -82,7 +82,7 @@ function userTable(users, isPending) {
           ${!u.admin
             ? `<button onclick="toggleAdmin('${u.id}',true)" class="btn btn-sm btn-secondary">Tornar Admin</button>`
             : `<button onclick="toggleAdmin('${u.id}',false)" class="btn btn-sm btn-secondary">Remover Admin</button>`}
-          <button onclick="resetPassword('${u.id}','${u.nome}')" class="btn btn-sm btn-secondary">Trocar Senha</button>
+          <button onclick="resetPassword('${u.id}',${escapeHtml(JSON.stringify(u.nome))})" class="btn btn-sm btn-secondary">Trocar Senha</button>
         </td>
       </tr>`).join('')}
     </tbody>
@@ -95,11 +95,11 @@ function iaUserTable(users) {
     <thead><tr><th>Nome</th><th>Campeão</th><th>Ações</th></tr></thead>
     <tbody>
       ${users.map(u => `<tr>
-        <td>🤖 ${u.nome}</td>
-        <td>${u.campeao || '-'}</td>
+        <td>🤖 ${escapeHtml(u.nome)}</td>
+        <td>${escapeHtml(u.campeao || '-')}</td>
         <td class="action-cell">
-          <button onclick="openIABetsModal('${u.id}','${u.nome}')" class="btn btn-sm btn-primary">Gerenciar Apostas</button>
-          <button onclick="setIAChampion('${u.id}','${u.nome}')" class="btn btn-sm btn-secondary">Definir Campeão</button>
+          <button onclick="openIABetsModal('${u.id}',${escapeHtml(JSON.stringify(u.nome))})" class="btn btn-sm btn-primary">Gerenciar Apostas</button>
+          <button onclick="setIAChampion('${u.id}',${escapeHtml(JSON.stringify(u.nome))})" class="btn btn-sm btn-secondary">Definir Campeão</button>
         </td>
       </tr>`).join('')}
     </tbody>
@@ -141,7 +141,7 @@ async function openIABetsModal(userId, nome) {
 
   modal.innerHTML = `
     <div class="modal-content" style="max-width:680px;width:95%">
-      <h3>🤖 Apostas de ${nome}</h3>
+      <h3>🤖 Apostas de ${escapeHtml(nome)}</h3>
       <div style="max-height:60vh;overflow-y:auto;margin-top:16px">
         <table class="admin-table">
           <thead><tr><th>Fase</th><th>Jogo</th><th>Palpite</th><th></th></tr></thead>
@@ -174,7 +174,7 @@ async function setIAChampion(userId, nome) {
 
   modal.innerHTML = `
     <div class="modal-content">
-      <h3>🏆 Campeão de ${nome}</h3>
+      <h3>🏆 Campeão de ${escapeHtml(nome)}</h3>
       <div class="form-group" style="margin-top:16px">
         <label>País campeão</label>
         <select id="ia-champ-select">
@@ -542,6 +542,10 @@ async function loadConfig() {
       ${boolToggle('apostas_campeonato_abertas', 'Apostas no Campeão Abertas', 'Permite que usuários escolham (ou alterem) seu palpite de campeão.')}
     </div>
     <div class="config-section">
+      <h3>Sincronização com API</h3>
+      ${boolToggle('ignorar_fase_grupos', 'Ignorar Fase de Grupos', 'Ao sincronizar com a API, não importa jogos da fase de grupos. Ative antes de apagar os jogos da primeira fase.')}
+    </div>
+    <div class="config-section">
       <h3>Ranking</h3>
       ${boolToggle('campeao_revelado', 'Revelar Palpites de Campeão', 'Exibe a coluna de campeão na tabela de ranking.')}
       ${boolToggle('apostas_visiveis', 'Palpites Visíveis no Ranking', 'Permite que qualquer usuário veja os palpites detalhados de todos clicando no nome no ranking.')}
@@ -557,6 +561,16 @@ async function loadConfig() {
           </select>
           <button onclick="saveFinalChamp()" class="btn btn-primary btn-sm">Salvar</button>
         </div>
+      </div>
+    </div>
+    <div class="config-section">
+      <h3>Gráficos</h3>
+      <div class="config-item">
+        <div>
+          <strong>Limpar Histórico do Ranking</strong>
+          <p class="config-hint">Remove todos os snapshots salvos. Use após corrigir resultados durante testes. Re-registre cada resultado para regenerar o histórico.</p>
+        </div>
+        <button onclick="limparHistoricoRanking()" class="btn btn-danger btn-sm">Limpar Histórico</button>
       </div>
     </div>
     <div class="config-section">
@@ -591,6 +605,13 @@ async function saveFinalChamp() {
   });
   if (!res.success) return showToast(res.error, 'error');
   showToast('Campeão final salvo!');
+}
+
+async function limparHistoricoRanking() {
+  if (!confirm('Tem certeza? Todos os snapshots do histórico serão apagados. Re-registre os resultados para regenerar.')) return;
+  const res = await apiPost('adminLimparHistoricoRanking', Auth.credentials());
+  if (!res.success) return showToast(res.error, 'error');
+  showToast(res.message);
 }
 
 async function setupAdmin() {

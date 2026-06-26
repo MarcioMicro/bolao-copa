@@ -82,21 +82,21 @@ function renderRanking(ranking, config, currentUser) {
 
     const champCell = champRevealed
       ? `<td class="${r.champPoints > 0 ? 'champ-correct' : ''}">
-          ${r.campeao || '-'}
+          ${escapeHtml(r.campeao || '-')}
           ${r.champPoints > 0 ? ' +20' : ''}
         </td>`
       : '';
 
     const nameBadge = ia
-      ? `<span class="ia-badge" title="${ia.label}">${ia.emoji} ${r.nome}</span>`
+      ? `<span class="ia-badge" title="${escapeHtml(ia.label)}">${ia.emoji} ${escapeHtml(r.nome)}</span>`
       : '';
 
     const nameText = ia
       ? nameBadge
-      : (isMe ? `<strong>${r.nome}</strong>` : r.nome);
+      : (isMe ? `<strong>${escapeHtml(r.nome)}</strong>` : escapeHtml(r.nome));
 
     const nameCell = apostasVisiveis
-      ? `<span class="ranking-name-link" onclick="openBetsModal('${r.nome}')">${nameText}</span>`
+      ? `<span class="ranking-name-link" onclick="openBetsModal(${escapeHtml(JSON.stringify(r.nome))})">${nameText}</span>`
       : nameText;
 
     return `<tr class="${isMe ? 'row-me' : ''}${r.isIA ? ' row-ia' : ''}">
