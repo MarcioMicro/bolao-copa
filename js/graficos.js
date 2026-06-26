@@ -1,5 +1,6 @@
 let historico = [];
 let chart = null;
+const MAX_VISIBLE = 8;
 
 async function init() {
   setupNav();
@@ -24,7 +25,7 @@ async function init() {
     }
 
     // Constrói lista de usuários únicos
-    const usuarios = [...new Set(historico.map(h => h.nome))].sort();
+    const usuarios = [...new Set(historico.map(h => h.nome))].sort((a, b) => a.localeCompare(b, 'pt', { sensitivity: 'base' }));
     populateUsuarioFilter(usuarios);
 
     // Constrói legenda de fases
@@ -57,18 +58,54 @@ function renderChart() {
   if (chart) chart.destroy();
 
   const chartType = document.getElementById('chart-type').value;
-  const loadingMsg = document.getElementById('loading-msg');
+  const isComparacao = chartType === 'comparacao';
+
+  document.getElementById('filter-usuarios-div').style.display = isComparacao ? 'block' : 'none';
+  document.getElementById('legend-controls').style.display = isComparacao ? 'none' : 'flex';
 
   if (chartType === 'posicoes') {
     renderPosicoes();
-    document.getElementById('filter-usuarios-div').style.display = 'none';
   } else if (chartType === 'pontos') {
     renderPontos();
-    document.getElementById('filter-usuarios-div').style.display = 'none';
   } else if (chartType === 'comparacao') {
     renderComparacao();
-    document.getElementById('filter-usuarios-div').style.display = 'block';
   }
+}
+
+function toggleAllSeries(visible) {
+  if (!chart) return;
+  chart.data.datasets.forEach((_, i) => {
+    const meta = chart.getDatasetMeta(i);
+    meta.hidden = !visible;
+  });
+  chart.update();
+}
+
+function setupScrollbar(totalPontos) {
+  const wrap = document.getElementById('scroll-wrap');
+  const slider = document.getElementById('chart-scroll');
+  if (totalPontos <= MAX_VISIBLE) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'block';
+  slider.min = 0;
+  slider.max = totalPontos - MAX_VISIBLE;
+  slider.value = slider.max; // começa mostrando os mais recentes
+}
+
+function onChartScroll() {
+  if (!chart) return;
+  const slider = document.getElementById('chart-scroll');
+  const offset = parseInt(slider.value);
+  chart.options.scales.x.min = offset;
+  chart.options.scales.x.max = offset + MAX_VISIBLE - 1;
+  chart.update('none');
+}
+
+function xAxisWindow(total) {
+  if (total <= MAX_VISIBLE) return {};
+  return { min: total - MAX_VISIBLE, max: total - 1 };
 }
 
 function renderPosicoes() {
@@ -89,7 +126,7 @@ function renderPosicoes() {
   });
 
   // Pega usuários únicos
-  const usuarios = [...new Set(historico.map(h => h.nome))].sort();
+  const usuarios = [...new Set(historico.map(h => h.nome))].sort((a, b) => a.localeCompare(b, 'pt', { sensitivity: 'base' }));
   const cores = gerarCores(usuarios.length);
 
   const datasets = usuarios.map((user, idx) => {
@@ -112,6 +149,9 @@ function renderPosicoes() {
     };
   });
 
+  const win = xAxisWindow(timestamps.length);
+  setupScrollbar(timestamps.length);
+
   const ctx = document.getElementById('myChart').getContext('2d');
   chart = new Chart(ctx, {
     type: 'line',
@@ -122,24 +162,19 @@ function renderPosicoes() {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: {
-            font: { size: 12 },
-            padding: 15,
-            usePointStyle: true,
-          }
+          labels: { font: { size: 12 }, padding: 15, usePointStyle: true }
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
-              return context.dataset.label + ': ' + (context.parsed.y ? context.parsed.y + 'º lugar' : 'N/A');
-            }
+            label: ctx => ctx.dataset.label + ': ' + (ctx.parsed.y ? ctx.parsed.y + 'º lugar' : 'N/A')
           }
         }
       },
       scales: {
+        x: { ...win },
         y: {
           title: { display: true, text: 'Posição no Ranking' },
-          reverse: true,  // 1º no topo
+          reverse: true,
           ticks: { stepSize: 1 },
           grace: '5%'
         }
@@ -166,7 +201,7 @@ function renderPontos() {
   });
 
   // Pega usuários únicos
-  const usuarios = [...new Set(historico.map(h => h.nome))].sort();
+  const usuarios = [...new Set(historico.map(h => h.nome))].sort((a, b) => a.localeCompare(b, 'pt', { sensitivity: 'base' }));
   const cores = gerarCores(usuarios.length);
 
   const datasets = usuarios.map((user, idx) => {
@@ -189,6 +224,9 @@ function renderPontos() {
     };
   });
 
+  const win = xAxisWindow(timestamps.length);
+  setupScrollbar(timestamps.length);
+
   const ctx = document.getElementById('myChart').getContext('2d');
   chart = new Chart(ctx, {
     type: 'line',
@@ -199,21 +237,16 @@ function renderPontos() {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: {
-            font: { size: 12 },
-            padding: 15,
-            usePointStyle: true,
-          }
+          labels: { font: { size: 12 }, padding: 15, usePointStyle: true }
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
-              return context.dataset.label + ': ' + context.parsed.y + 'pts';
-            }
+            label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + 'pts'
           }
         }
       },
       scales: {
+        x: { ...win },
         y: {
           title: { display: true, text: 'Pontuação' },
           beginAtZero: true,
@@ -234,7 +267,7 @@ function renderComparacao() {
 
   // Se nenhum selecionado, mostra os 5 primeiros
   if (usuariosSelecionados.length === 0) {
-    const todoUsuarios = [...new Set(historico.map(h => h.nome))].sort();
+    const todoUsuarios = [...new Set(historico.map(h => h.nome))].sort((a, b) => a.localeCompare(b, 'pt', { sensitivity: 'base' }));
     usuariosSelecionados = todoUsuarios.slice(0, Math.min(5, todoUsuarios.length));
   }
 
@@ -277,6 +310,9 @@ function renderComparacao() {
     };
   });
 
+  const win = xAxisWindow(timestamps.length);
+  setupScrollbar(timestamps.length);
+
   const ctx = document.getElementById('myChart').getContext('2d');
   chart = new Chart(ctx, {
     type: 'line',
@@ -287,22 +323,17 @@ function renderComparacao() {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: {
-            font: { size: 12, weight: 'bold' },
-            padding: 15,
-            usePointStyle: true,
-          }
+          labels: { font: { size: 12, weight: 'bold' }, padding: 15, usePointStyle: true }
         },
         tooltip: {
           backgroundColor: 'rgba(0,0,0,0.8)',
           callbacks: {
-            label: function(context) {
-              return context.dataset.label + ': ' + context.parsed.y + 'pts';
-            }
+            label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y + 'pts'
           }
         }
       },
       scales: {
+        x: { ...win },
         y: {
           title: { display: true, text: 'Pontuação' },
           beginAtZero: true,

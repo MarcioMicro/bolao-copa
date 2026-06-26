@@ -37,10 +37,23 @@
       </div>
     </div>
 
+    <!-- Botões de seleção rápida -->
+    <div id="legend-controls" style="display:none;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <button onclick="toggleAllSeries(true)" class="btn btn-secondary btn-sm">Selecionar todos</button>
+      <button onclick="toggleAllSeries(false)" class="btn btn-secondary btn-sm">Limpar todos</button>
+    </div>
+
     <!-- Container do gráfico -->
     <div style="background:white;padding:20px;border-radius:10px;box-shadow:var(--shadow);margin-bottom:20px">
       <canvas id="myChart" style="max-height:400px"></canvas>
       <div id="loading-msg" class="loading-msg">Carregando dados...</div>
+      <div id="scroll-wrap" style="display:none;margin-top:12px">
+        <div style="display:flex;align-items:center;gap:10px;font-size:0.8rem;color:var(--cinza)">
+          <span>◀ Mais antigos</span>
+          <input type="range" id="chart-scroll" style="flex:1;accent-color:var(--verde)" oninput="onChartScroll()">
+          <span>Mais recentes ▶</span>
+        </div>
+      </div>
     </div>
 
     <!-- Legenda de eventos (fases) -->
