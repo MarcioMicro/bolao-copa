@@ -86,6 +86,17 @@ function openRegrasModal() {
         </section>
 
         <section class="regras-section">
+          <h4>Critérios de desempate</h4>
+          <p>Em caso de empate em pontos totais, a classificação é definida pela seguinte ordem:</p>
+          <ol>
+            <li><strong>Acerto do campeão final</strong> — quem acertou o campeão leva vantagem</li>
+            <li><strong>Maior número de placares exatos</strong> — mais acertos de 8 pts</li>
+            <li><strong>Maior número de acertos de saldo de gols</strong> — mais acertos de 5 pts</li>
+          </ol>
+          <p style="margin-top:8px;font-size:0.85rem;color:var(--cinza)">Se ainda assim houver empate, os participantes ficam na mesma posição.</p>
+        </section>
+
+        <section class="regras-section">
           <h4>Exemplos completos de pontuação por jogo</h4>
           <ul>
             <li><strong>Resultado real: Brasil 2 × 1 Argentina</strong>

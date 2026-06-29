@@ -21,6 +21,11 @@ async function loadAll() {
   (betsRes.bets || []).forEach(b => { userBets[b.jogoId] = b; });
   config = cfgRes.config || {};
 
+  if (betsRes.success && betsRes.campeao !== undefined && betsRes.campeao !== user.campeao) {
+    user.campeao = betsRes.campeao;
+    Auth.save(user);
+  }
+
   renderChampion();
   renderGames();
 }

@@ -1,4 +1,4 @@
-let rankingData, rankingConfig, rankingGames, showIA = true;
+let rankingData, rankingConfig, rankingGames, showIA = false;
 
 async function init() {
   const user = Auth.get();
@@ -58,7 +58,16 @@ function renderRanking(ranking, config, currentUser) {
 
   const tbody = document.getElementById('ranking-body');
 
-  const visibleRanking = ranking.filter(r => showIA || !r.isIA);
+  const visibleRanking = [...ranking]
+    .sort((a, b) => {
+      if (b.points !== a.points) return b.points - a.points;
+      const aChamp = a.champPoints > 0 ? 1 : 0;
+      const bChamp = b.champPoints > 0 ? 1 : 0;
+      if (bChamp !== aChamp) return bChamp - aChamp;
+      if (b.exactScores !== a.exactScores) return b.exactScores - a.exactScores;
+      return b.correctDiffs - a.correctDiffs;
+    })
+    .filter(r => showIA || !r.isIA);
 
   if (!visibleRanking.length) {
     tbody.innerHTML = '<tr><td colspan="7">Nenhum resultado ainda.</td></tr>';
