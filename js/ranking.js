@@ -18,7 +18,11 @@ async function init() {
 
   rankingData   = rankRes.ranking;
   rankingConfig = cfgRes.config || {};
-  rankingGames  = (gamesRes.games || []).filter(g => g.encerrado === true || String(g.encerrado).toUpperCase() === 'TRUE');
+  rankingGames  = (gamesRes.games || []).filter(g => {
+    const closed = g.encerrado === true || String(g.encerrado).toUpperCase() === 'TRUE';
+    const hasResult = g.golTime1 !== null && g.golTime1 !== '' && g.golTime2 !== null && g.golTime2 !== '';
+    return closed && hasResult;
+  });
 
   renderRanking(rankingData, rankingConfig, user);
 }
